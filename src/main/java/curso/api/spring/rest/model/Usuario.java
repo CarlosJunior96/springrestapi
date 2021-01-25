@@ -1,16 +1,20 @@
 package curso.api.spring.rest.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 @Entity
-public class Usuario implements Serializable {
+@Table(name = "usuario")
+public class Usuario implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String login;
@@ -19,8 +23,19 @@ public class Usuario implements Serializable {
 
     private String senha;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Telefone> telefones = new HashSet<>();
+
+    /** vai pegar esses dados do banco **/
+    /** vai ser criado uma tabela que conterá os dados do usuário **/
+    /** e nela terá o código do usuário e o código do acesso **/
+    /** JoinColumns() ele irá fazer a união dessas colunas no banco de dados **/
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuarios_role", uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}, name = "unique_role_user")}
+    ,joinColumns = {@JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario", foreignKey = @ForeignKey (name = "usuario_fk", value = ConstraintMode.CONSTRAINT))}
+    ,inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT))})
+    private List<Role> roles;
 
     public Usuario (){
 
@@ -84,5 +99,41 @@ public class Usuario implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /** ESSA LISTA CONTÉM AS AUTORIZAÇÕES, OU SEJA, OS ACESSOS DO USUÁRIO, EXEMPLO: ROLE_SECRETARIO**/
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

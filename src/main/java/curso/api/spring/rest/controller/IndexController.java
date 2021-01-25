@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController /** ARQUITETURA REST **/
 @RequestMapping(value = "/users")
 public class IndexController {
 
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @CrossOrigin
     @GetMapping(value = "/", produces = "application/json")
     public ResponseEntity<List<Usuario>> findAll(){
         List<Usuario> usuarios = usuarioRepository.findAll();

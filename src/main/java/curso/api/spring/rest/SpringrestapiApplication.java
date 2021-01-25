@@ -17,7 +17,7 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         /** liberando acesso a todos os controles e end points **/
-        registry.addMapping("/**");
+       // registry.addMapping("/**");
 
         /** liberando apenas os endpoints de um controller específico **/
 
@@ -27,11 +27,14 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
         /** o padrão do allowedOrigins("*") é o servidor de origem que faz requisição a api, pode ser especificado 1 ou mais
          *  servidores que poderão ter acesso a o método específico **/
 
+        /**
         registry.addMapping("/users/**")
                 .allowedMethods("POST", "PUT", "DELETE", "GET")
-                .allowedOrigins("www.loja1.com.br", "www.loja2.com.br");
+                .allowedOrigins("*");
 
-        /** liberando acesso a um endpoint específico **/
+        **
+        /** liberando acesso a um endpoint específico
         registry.addMapping("/users/{id}");
+        **/
     }
 }
