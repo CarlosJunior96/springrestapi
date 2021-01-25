@@ -19,7 +19,7 @@ public class Usuario implements Serializable {
 
     private String senha;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Set<Telefone> telefones = new HashSet<>();
 
     public Usuario (){

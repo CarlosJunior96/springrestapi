@@ -80,7 +80,6 @@ public class IndexController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id){
         usuarioRepository.deleteById(id);
-        int soma = 1 + 1;
         return ResponseEntity.noContent().build();
     }
 

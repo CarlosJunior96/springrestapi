@@ -52,6 +52,11 @@
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-bom</artifactId>
+            <version>5.4.2</version>
+        </dependency>
     </dependencies>
 
     <build>
