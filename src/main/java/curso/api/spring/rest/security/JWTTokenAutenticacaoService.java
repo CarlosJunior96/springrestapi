@@ -52,7 +52,7 @@ public class JWTTokenAutenticacaoService {
         String JWT = Jwts.builder()
                 .setSubject(username) /** colocando o usuário para ser gerado o token **/
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) /** tempo de duração do token concatenado com data atual **/
-                .signWith(SignatureAlgorithm.ES512, SECRET).compact(); /** pegando senha e compactando ela com algoritmo ES512**/
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact(); /** pegando senha e compactando ela com algoritmo ES512**/
 
         /** JUNTA PREFIXO COM TOKEN **/
         String token = TOKEN_PREFIX + " " + JWT; /** Bearer token-token-token-token **/

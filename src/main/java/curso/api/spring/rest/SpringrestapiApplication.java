@@ -2,6 +2,7 @@ package curso.api.spring.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,6 +11,8 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringrestapiApplication.class, args);
+        System.out.println(new BCryptPasswordEncoder().encode("123"));
+        String a = new BCryptPasswordEncoder().encode("123");
     }
 
     /** CENTRALIZADO ACESSO CROSSORIGIN A API**/
@@ -27,12 +30,12 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
         /** o padrão do allowedOrigins("*") é o servidor de origem que faz requisição a api, pode ser especificado 1 ou mais
          *  servidores que poderão ter acesso a o método específico **/
 
-        /**
-        registry.addMapping("/users/**")
-                .allowedMethods("POST", "PUT", "DELETE", "GET")
+
+        registry.addMapping("/usuario/**")
+                .allowedMethods("*")
                 .allowedOrigins("*");
 
-        **
+
         /** liberando acesso a um endpoint específico
         registry.addMapping("/users/{id}");
         **/

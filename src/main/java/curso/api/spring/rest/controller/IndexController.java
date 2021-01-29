@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 @RestController /** ARQUITETURA REST **/
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/usuario")
 public class IndexController {
 
 
