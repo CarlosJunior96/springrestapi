@@ -1,5 +1,7 @@
 package curso.api.spring.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,6 +19,7 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     private String login;
 
     private String nome;
@@ -34,8 +37,8 @@ public class Usuario implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuarios_role", uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}, name = "unique_role_user")}
     ,joinColumns = {@JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario", foreignKey = @ForeignKey (name = "usuario_fk", value = ConstraintMode.CONSTRAINT))}
-    ,inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT))})
-    private List<Role> roles;
+    ,inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", updatable = false, foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT))})
+    private Collection<Role> roles;
 
     public Usuario (){
 
@@ -107,30 +110,36 @@ public class Usuario implements UserDetails {
         return roles;
     }
 
+
     @Override
     public String getPassword() {
         return this.senha;
     }
+
 
     @Override
     public String getUsername() {
         return this.login;
     }
 
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
 
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
 
     @Override
     public boolean isEnabled() {

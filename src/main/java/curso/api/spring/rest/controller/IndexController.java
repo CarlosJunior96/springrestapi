@@ -5,6 +5,7 @@ import curso.api.spring.rest.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,8 @@ public class IndexController {
     @PostMapping(value = "/", produces = "application/json")
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario){
 
+        String senhaCript= new BCryptPasswordEncoder().encode(usuario.getSenha());
+        usuario.setSenha(senhaCript);
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
 
         return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
@@ -65,10 +68,14 @@ public class IndexController {
     public ResponseEntity<Usuario> atualizarUsuario(@RequestBody Usuario usuario){
 
         /** CODIGO RELACIONADO A VENDA **/
+        Usuario usuarioTemporario = usuarioRepository.findUserByLogin(usuario.getLogin());
+        if (!usuarioTemporario.getSenha().equals(usuario.getSenha())){
+            String senhaCript= new BCryptPasswordEncoder().encode(usuario.getSenha());
+            usuario.setSenha(senhaCript);
+        }
 
-        Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-
-        return new ResponseEntity<Usuario>(usuarioAtualizado, HttpStatus.OK);
+        usuarioRepository.save(usuario);
+        return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{iduser}/idvenda/{idvenda}", produces = "application/json")

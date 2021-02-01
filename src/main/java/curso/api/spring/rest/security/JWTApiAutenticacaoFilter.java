@@ -11,7 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-/** filtro onde todas as requisições serão capturadas para autenticas **/
+/** filtro onde todas as requisições serão capturadas para autenticar **/
+/** toda vez que tentar autenticar essa classe pegará a solicitação **/
 public class JWTApiAutenticacaoFilter extends GenericFilterBean {
 
 

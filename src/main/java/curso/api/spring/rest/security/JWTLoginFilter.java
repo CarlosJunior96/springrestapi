@@ -31,6 +31,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     /** MÉTODO QUE RETORNA O USUÁRIO APÓS PROCESSAR AUTENTICAÇÃO **/
+    /** método chamado na autenticação do usuário **/
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
 
@@ -48,7 +49,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
 
-        new JWTTokenAutenticacaoService().addAuthetication(response, authResult.getName());
 
+        new JWTTokenAutenticacaoService().addAuthetication(response, authResult.getName());
     }
 }

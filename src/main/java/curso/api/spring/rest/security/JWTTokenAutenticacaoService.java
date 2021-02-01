@@ -1,5 +1,6 @@
 package curso.api.spring.rest.security;
 
+import curso.api.spring.rest.ApplicationContextLoad;
 import curso.api.spring.rest.model.Usuario;
 import curso.api.spring.rest.repository.UsuarioRepository;
 import io.jsonwebtoken.Jwts;
@@ -52,7 +53,7 @@ public class JWTTokenAutenticacaoService {
         String JWT = Jwts.builder()
                 .setSubject(username) /** colocando o usuário para ser gerado o token **/
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) /** tempo de duração do token concatenado com data atual **/
-                .signWith(SignatureAlgorithm.HS512, SECRET).compact(); /** pegando senha e compactando ela com algoritmo ES512**/
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact(); /** pegando senha e compactando ela com algoritmo HS512**/
 
         /** JUNTA PREFIXO COM TOKEN **/
         String token = TOKEN_PREFIX + " " + JWT; /** Bearer token-token-token-token **/
@@ -62,7 +63,7 @@ public class JWTTokenAutenticacaoService {
 
         /** ESCREVE TOKEN COMO RESPOSTA NO CORPO DO HTTP **/
         /** \" -> é usado para da uma resposta em formato JSON **/
-        response.getWriter().write("{\"Authorization\": \"" + token + "\"}");
+        response.getWriter().write("{\""+HEADER_STRING+"\": \""+token+"\" }");
     }
     /** FIM PARTE DA GERAÇÃO **/
 
@@ -81,7 +82,9 @@ public class JWTTokenAutenticacaoService {
                     .getBody().getSubject(); /** aqui retorna somente o usuario **/
 
             if (user != null) {
-                Usuario usuario = usuarioRepository.findUserByLogin(user);
+                Usuario usuario = ApplicationContextLoad.getApplicationContext()
+                        .getBean(UsuarioRepository.class) /** são todas classes e serviços carregados no projeto **/
+                        .findUserByLogin(user);
 
                 if (usuario != null) {
                     /** retorna um usuário pronto para validação de token**/
