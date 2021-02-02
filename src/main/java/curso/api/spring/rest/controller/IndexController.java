@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,18 +65,26 @@ public class IndexController {
         return new ResponseEntity("ID User: " + iduser + ", ID Venda: " + idvenda, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/", produces = "application/json")
-    public ResponseEntity<Usuario> atualizarUsuario(@RequestBody Usuario usuario){
+    @PutMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable(value = "id") Long id, @RequestBody Usuario usuario){
 
-        /** CODIGO RELACIONADO A VENDA **/
-        Usuario usuarioTemporario = usuarioRepository.findUserByLogin(usuario.getLogin());
-        if (!usuarioTemporario.getSenha().equals(usuario.getSenha())){
-            String senhaCript= new BCryptPasswordEncoder().encode(usuario.getSenha());
-            usuario.setSenha(senhaCript);
+
+        Usuario usuarioTemporario = usuarioRepository.getOne(id);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        if (usuario.getSenha() != null){
+            if (!passwordEncoder.matches(usuario.getSenha(), usuarioTemporario.getSenha())){
+             String senhaCript= new BCryptPasswordEncoder().encode(usuario.getSenha());
+             usuarioTemporario.setSenha(senhaCript);
+             }
         }
 
-        usuarioRepository.save(usuario);
-        return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+        if( usuario.getNome() != null){
+            usuarioTemporario.setNome(usuario.getNome());
+        }
+
+        usuarioRepository.save(usuarioTemporario);
+        return ResponseEntity.ok().body(usuarioTemporario);
     }
 
     @PutMapping(value = "/{iduser}/idvenda/{idvenda}", produces = "application/json")

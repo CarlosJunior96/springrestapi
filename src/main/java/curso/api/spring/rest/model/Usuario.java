@@ -6,7 +6,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.*;
 
 @Entity
@@ -27,29 +26,25 @@ public class Usuario implements UserDetails {
     private String senha;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Telefone> telefones = new HashSet<>();
+    private List<Telefone> telefones = new ArrayList<>();
 
     /** vai pegar esses dados do banco **/
     /** vai ser criado uma tabela que conterá os dados do usuário **/
     /** e nela terá o código do usuário e o código do acesso **/
     /** JoinColumns() ele irá fazer a união dessas colunas no banco de dados **/
 
-    @OneToMany(fetch = FetchType.EAGER)
+    /** @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuarios_role", uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}, name = "unique_role_user")}
     ,joinColumns = {@JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario", foreignKey = @ForeignKey (name = "usuario_fk", value = ConstraintMode.CONSTRAINT))}
-    ,inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", updatable = false, foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT))})
-    private Collection<Role> roles;
+    ,inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id", table = "role", updatable = false, foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT))})**/
 
-    public Usuario (){
 
-    }
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuarios_role", uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "role_id"}, name = "unique_role_user"),
+    joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario", foreignKey = @ForeignKey(name = "usuario_fk", value = ConstraintMode.CONSTRAINT)),
 
-    public Usuario(Long id, String login, String nome, String senha){
-        this.id = id;
-        this.login = login;
-        this.nome = nome;
-        this.senha = senha;
-    }
+    inverseJoinColumns = @JoinColumn (name = "role_id", referencedColumnName = "id", table = "role", foreignKey = @ForeignKey (name = "role_fk", value = ConstraintMode.CONSTRAINT)))
+    private List<Role> roles;
 
     public void setId(Long id) {
         this.id = id;
@@ -83,11 +78,11 @@ public class Usuario implements UserDetails {
         this.senha = senha;
     }
 
-    public Set<Telefone> getTelefones() {
+    public List<Telefone> getTelefones() {
         return telefones;
     }
 
-    public void setTelefones(Set<Telefone> telefones) {
+    public void setTelefones(List<Telefone> telefones) {
         this.telefones = telefones;
     }
 
@@ -96,53 +91,50 @@ public class Usuario implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
-        return id == usuario.id;
+        return senha.equals(usuario.senha);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(senha);
     }
 
-    /** ESSA LISTA CONTÉM AS AUTORIZAÇÕES, OU SEJA, OS ACESSOS DO USUÁRIO, EXEMPLO: ROLE_SECRETARIO**/
     @Override
+    @JsonProperty
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
-
 
     @Override
     public String getPassword() {
         return this.senha;
     }
 
-
     @Override
     public String getUsername() {
         return this.login;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-
     @Override
     public boolean isEnabled() {
         return true;
     }
+
+    /** ESSA LISTA CONTÉM AS AUTORIZAÇÕES, OU SEJA, OS ACESSOS DO USUÁRIO, EXEMPLO: ROLE_SECRETARIO**/
+
 }
