@@ -83,8 +83,8 @@ public class IndexController {
             usuarioTemporario.setNome(usuario.getNome());
         }
 
-        usuarioRepository.save(usuarioTemporario);
-        return ResponseEntity.ok().body(usuarioTemporario);
+        Usuario usuarioSalvo = usuarioRepository.save(usuarioTemporario);
+        return ResponseEntity.ok().body(usuarioSalvo);
     }
 
     @PutMapping(value = "/{iduser}/idvenda/{idvenda}", produces = "application/json")
