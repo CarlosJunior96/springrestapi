@@ -29,6 +29,7 @@ public class IndexController {
     }
 
     /** SERVIÇO RESTFUL**/
+    /**
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Usuario> init(@PathVariable (value = "id") Long id){
 
@@ -36,6 +37,7 @@ public class IndexController {
 
         return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
     }
+    **/
 
     @GetMapping(value = "/{id}/codigovenda/{venda}", produces = "application/json")
     public ResponseEntity<Usuario> relatorio(@PathVariable (value = "id") Long id,
@@ -102,4 +104,43 @@ public class IndexController {
         return ResponseEntity.noContent().build();
     }
 
+    /** VERSIONAMENTO DE API POR MEIO DE URL **/
+    /** INICIO **/
+    @GetMapping(value = "/v1/{id}", produces = "application/json")
+    public ResponseEntity<Usuario> exibirUsuarioV1(@PathVariable (value = "id") Long id){
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        System.out.println("Versão 1");
+        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/v2/{id}", produces = "application/json")
+    public ResponseEntity<Usuario> exibirUsuarioV2(@PathVariable (value = "id") Long id){
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        System.out.println("Versão 2");
+        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+    }
+    /** FIM **/
+
+
+
+
+    /** VERSIONAMENTO POR MEIO DE HEADER **/
+    @GetMapping(value = "/{id}", produces = "application/json", headers = "X-API-Version=v1")
+    public ResponseEntity<Usuario> exibirUsuarioIdV1(@PathVariable (value = "id") Long id){
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        System.out.println("Versão 1 com HEADER");
+        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json", headers = "X-API-Version=v2")
+    public ResponseEntity<Usuario> exibirUsuarioIdV2(@PathVariable (value = "id") Long id){
+
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        System.out.println("Versão 2 com HEADER");
+        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+    }
 }
