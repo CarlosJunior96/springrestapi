@@ -27,6 +27,8 @@ public class Usuario implements UserDetails {
 
     private String cpf;
 
+    private String token;
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Telefone> telefones = new ArrayList<>();
 
@@ -78,6 +80,14 @@ public class Usuario implements UserDetails {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /** https://www.concretepage.com/jackson-api/jackson-jsonproperty-and-jsonalias-example **/
