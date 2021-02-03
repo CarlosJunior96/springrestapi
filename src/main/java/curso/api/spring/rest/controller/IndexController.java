@@ -3,6 +3,9 @@ package curso.api.spring.rest.controller;
 import curso.api.spring.rest.model.Usuario;
 import curso.api.spring.rest.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,9 +24,11 @@ public class IndexController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @CrossOrigin
     @GetMapping(value = "/", produces = "application/json")
-    public ResponseEntity<List<Usuario>> findAll(){
+    @CacheEvict(value = "cacheusuarios", allEntries = true) /** se não tiver que é usado é removido **/
+    @CachePut("cacheusuarios") /** verifica se tem atualização e coloca no cache**/
+    public ResponseEntity<List<Usuario>> findAll() throws InterruptedException {
+
         List<Usuario> usuarios = usuarioRepository.findAll();
         return ResponseEntity.ok().body(usuarios);
     }
