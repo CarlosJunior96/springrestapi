@@ -3,6 +3,7 @@ package curso.api.spring.rest.security;
 import curso.api.spring.rest.ApplicationContextLoad;
 import curso.api.spring.rest.model.Usuario;
 import curso.api.spring.rest.repository.UsuarioRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,35 +75,43 @@ public class JWTTokenAutenticacaoService {
 
     /** INICIO VALIDAÇÃO DO USUÁRIO **/
     /** RETORNA O USUARIO VALIDADO COM TOKEN OU CASO NÃO SEJA VÁLIDO RETORNA NULL **/
-    public Authentication getAuthentication(HttpServletRequest requisicao, HttpServletResponse resposta) {
+    public Authentication getAuthentication(HttpServletRequest requisicao, HttpServletResponse resposta) throws IOException {
 
         String token = requisicao.getHeader(HEADER_STRING);
 
-        if (token != null) {
+        try {
 
-            String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
-            /** faz a validação do token do usuário  na requisição **/
-            String user = Jwts.parser().setSigningKey(SECRET) /** Bearer token-token-token-token **/
-                    .parseClaimsJws(tokenLimpo) /** token-token-token-token **/
-                    .getBody().getSubject(); /** aqui retorna somente o usuario **/
 
-            if (user != null) {
-                Usuario usuario = ApplicationContextLoad.getApplicationContext()
-                        .getBean(UsuarioRepository.class) /** são todas classes e serviços carregados no projeto **/
-                        .findUserByLogin(user);
+            if (token != null) {
 
-                if (usuario != null) {
-                    /** VALIDA SE O TOKEN RETORNADO TEM NO BANCO DE DADOS CASO TENHA PERMITE O ACESSO **/
-                    if (tokenLimpo.equalsIgnoreCase(usuario.getToken())){
-                        /** retorna um usuário pronto para validação de token**/
-                        return new UsernamePasswordAuthenticationToken(
-                                usuario.getLogin(),
-                                usuario.getSenha(),
-                                usuario.getAuthorities());
+                String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
+                /** faz a validação do token do usuário  na requisição **/
+                String user = Jwts.parser().setSigningKey(SECRET) /** Bearer token-token-token-token **/
+                        .parseClaimsJws(tokenLimpo) /** token-token-token-token **/
+                        .getBody().getSubject(); /** aqui retorna somente o usuario **/
 
+                if (user != null) {
+                    Usuario usuario = ApplicationContextLoad.getApplicationContext()
+                            .getBean(UsuarioRepository.class) /** são todas classes e serviços carregados no projeto **/
+                            .findUserByLogin(user);
+
+                    if (usuario != null) {
+                        /** VALIDA SE O TOKEN RETORNADO TEM NO BANCO DE DADOS CASO TENHA PERMITE O ACESSO **/
+                        if (tokenLimpo.equalsIgnoreCase(usuario.getToken())) {
+                            /** retorna um usuário pronto para validação de token**/
+                            return new UsernamePasswordAuthenticationToken(
+                                    usuario.getLogin(),
+                                    usuario.getSenha(),
+                                    usuario.getAuthorities());
+
+                        }
                     }
                 }
             }
+        }
+        /** aqui ele captura a exceção do tipo que token foi expirado e faça o tratamento dela no block catch dando uma informação **/
+        catch (ExpiredJwtException e){
+            resposta.getOutputStream().println("Token Expirado Faça o Login Novamente para Gerar Novo Token!!! ");
         }
 
         /** configurando o cors // crossorigin para acesso */
