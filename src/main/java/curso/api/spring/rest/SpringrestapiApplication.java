@@ -13,7 +13,7 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringrestapiApplication.class, args);
-        System.out.println(new BCryptPasswordEncoder().encode("123"));
+        System.out.println(new BCryptPasswordEncoder().encode("111"));
     }
 
     /** CENTRALIZADO ACESSO CROSSORIGIN A API**/

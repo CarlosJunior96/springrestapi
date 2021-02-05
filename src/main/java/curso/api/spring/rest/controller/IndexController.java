@@ -1,6 +1,7 @@
 package curso.api.spring.rest.controller;
 
 import curso.api.spring.rest.model.Usuario;
+import curso.api.spring.rest.model.UsuarioDTO;
 import curso.api.spring.rest.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,8 +13,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @RestController /** ARQUITETURA REST **/
@@ -43,14 +46,13 @@ public class IndexController {
         return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
     }
     **/
-
+    /**
     @GetMapping(value = "/{id}/codigovenda/{venda}", produces = "application/json")
     public ResponseEntity<Usuario> relatorio(@PathVariable (value = "id") Long id,
                                              @PathVariable (value = "venda") Long venda){
 
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
-    }
+        return new ResponseEntity<>(Usuario, HttpStatus.OK);
+    }**/
 
 
     @PostMapping(value = "/", produces = "application/json")

@@ -91,7 +91,7 @@ public class Usuario implements UserDetails {
     }
 
     /** https://www.concretepage.com/jackson-api/jackson-jsonproperty-and-jsonalias-example **/
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     public String getSenha() {
         return senha;
     }
@@ -128,37 +128,31 @@ public class Usuario implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public String getPassword() {
         return this.senha;
     }
 
     @Override
-    @JsonIgnore
     public String getUsername() {
         return this.login;
     }
 
     @Override
-    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
-    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
