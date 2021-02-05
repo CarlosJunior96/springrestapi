@@ -61,6 +61,10 @@ public class JWTTokenAutenticacaoService {
         /** ADICIONA NO CABEÇALHO HTTP **/
         response.addHeader(HEADER_STRING, token); /** Authorization: Bearer token-token-token-token **/
 
+        /** liberando resposta para portas diferentes que usam api, no caso clientes WEB **/
+        liberacaoCors(response);
+
+
         /** ESCREVE TOKEN COMO RESPOSTA NO CORPO DO HTTP **/
         /** \" -> é usado para da uma resposta em formato JSON **/
         response.getWriter().write("{\""+HEADER_STRING+"\": \""+token+"\" }");
@@ -70,7 +74,7 @@ public class JWTTokenAutenticacaoService {
 
     /** INICIO VALIDAÇÃO DO USUÁRIO **/
     /** RETORNA O USUARIO VALIDADO COM TOKEN OU CASO NÃO SEJA VÁLIDO RETORNA NULL **/
-    public Authentication getAuthentication(HttpServletRequest requisicao) {
+    public Authentication getAuthentication(HttpServletRequest requisicao, HttpServletResponse resposta) {
 
         String token = requisicao.getHeader(HEADER_STRING);
 
@@ -100,7 +104,31 @@ public class JWTTokenAutenticacaoService {
                 }
             }
         }
+
+        /** configurando o cors // crossorigin para acesso */
+        liberacaoCors(resposta);
+
         return null; /** usuario não autorizado **/
+    }
+
+    private void liberacaoCors(HttpServletResponse resposta) {
+
+        /** liberando para que o usuário possa ter acesso e requisição dessa api **/
+        if (resposta.getHeader("Access-Control-Allow-Origin") == null){
+            resposta.addHeader("Access-Control-Allow-Origin", "*");
+        }
+
+        if (resposta.getHeader("Access-Control-Allow-Headers") == null){
+            resposta.addHeader("Access-Control-Allow-Headers", "*");
+        }
+
+        if (resposta.getHeader("Access-Control-Request-Headers") == null){
+            resposta.addHeader("Access-Control-Request-Headers", "*");
+        }
+
+        if (resposta.getHeader("Access-Control-Methods-Headers") == null){
+            resposta.addHeader("Access-Control-Methods-Headers", "*");
+        }
     }
     /** FIM VALIDAÇÃO DO USUÁRIO **/
 }
