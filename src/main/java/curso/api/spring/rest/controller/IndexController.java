@@ -27,7 +27,7 @@ import java.util.Set;
 
 
 @RestController /** ARQUITETURA REST **/
-@RequestMapping(value = "/usuario")
+@RequestMapping(value = "/usuarios")
 public class IndexController {
 
 

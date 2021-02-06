@@ -71,7 +71,6 @@ public class JWTTokenAutenticacaoService {
         /** liberando resposta para portas diferentes que usam api, no caso clientes WEB **/
         liberacaoCors(response);
 
-
         /** ESCREVE TOKEN COMO RESPOSTA NO CORPO DO HTTP **/
         /** \" -> é usado para da uma resposta em formato JSON **/
         response.getWriter().write("{\""+HEADER_STRING+"\": \""+token+"\" }");
@@ -122,7 +121,6 @@ public class JWTTokenAutenticacaoService {
 
         /** configurando o cors // crossorigin para acesso */
         liberacaoCors(resposta);
-
         return null; /** usuario não autorizado **/
     }
 
