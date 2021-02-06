@@ -36,16 +36,17 @@ public class IndexController {
         return ResponseEntity.ok().body(usuarios);
     }
 
-    /** SERVIÇO RESTFUL**/
-    /**
+    /** classe DTO que retorna um usuário para visualização **/
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<Usuario> init(@PathVariable (value = "id") Long id){
+    public ResponseEntity<UsuarioDTO> init(@PathVariable (value = "id") Long id){
 
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        Usuario usuario = usuarioRepository.getOne(id);
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
 
-        return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+        return ResponseEntity.ok().body(usuarioDTO);
     }
-    **/
+
+
     /**
     @GetMapping(value = "/{id}/codigovenda/{venda}", produces = "application/json")
     public ResponseEntity<Usuario> relatorio(@PathVariable (value = "id") Long id,
