@@ -1,5 +1,6 @@
 package curso.api.spring.rest.controller;
 
+import com.google.gson.Gson;
 import curso.api.spring.rest.model.Usuario;
 import curso.api.spring.rest.model.UsuarioDTO;
 import curso.api.spring.rest.repository.UsuarioRepository;
@@ -13,6 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +64,46 @@ public class IndexController {
 
 
     @PostMapping(value = "/", produces = "application/json")
-    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario){
+    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) throws Exception {
+
+
+        /** consumindo api publica de consulta CEP **/
+
+        URL url = new URL("https://viacep.com.br/ws/"+usuario.getCep()+"/json/");
+
+        /** abrindo a conexão **/
+        URLConnection connection = url.openConnection();
+
+        /** retorno da requisição a URL, ou seja, vem os dados da requisição a URL **/
+        InputStream inputStream = connection.getInputStream();
+
+        /** preparando a leitura do inputStream **/
+        /** aqui é atribuido ao bufferedReader os dados do inputStream o UTF-8 indica para reconhecimento de caractere especial **/
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+
+        /** criando variável para ler o bufferedReader**/
+        String cep = "";
+        StringBuilder jsonCep = new StringBuilder();
+
+        /** dentro desse while acontece a leitura enquanto as linhas retornadas pelo bufferedReader forem diferentes de nulas **/
+        while ((( cep = bufferedReader.readLine())!= null)){
+
+            /** aqui acontece a junção da string contida no cep **/
+            jsonCep.append(cep);
+        }
+
+        /** transformar string recebida para o tipo JSON **/
+        Usuario usuarioAux = new Gson().fromJson(jsonCep.toString(), Usuario.class);
+
+        /** atribuindo os dados recebidos para o objeto usuario **/
+        usuario.setLogradouro(usuarioAux.getLogradouro());
+        usuario.setComplemento(usuarioAux.getComplemento());
+        usuario.setLocalidade(usuarioAux.getLocalidade());
+        usuario.setUf(usuarioAux.getUf());
+
+
+        /** consumindo api publica de consulta CEP **/
 
         String senhaCript= new BCryptPasswordEncoder().encode(usuario.getSenha());
         usuario.setSenha(senhaCript);
@@ -91,6 +137,10 @@ public class IndexController {
 
         if( usuario.getNome() != null){
             usuarioTemporario.setNome(usuario.getNome());
+        }
+
+        if ( usuario.getCep() != null){
+            usuarioTemporario.setCep(usuario.getCep());
         }
 
         Usuario usuarioSalvo = usuarioRepository.save(usuarioTemporario);
